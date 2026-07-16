@@ -238,6 +238,16 @@ REL24:		reloc				is	pcdisp24 [ reloc = (inst_start & 0xFFFFFFFC) + (pcdisp24 << 
 	CBR = zext(Rsrc1 s< Rsrc2);
 }
 
+:CMPZ	Rsrc			is op12=0x00; op3=7 & Rsrc {
+	$(C) = (Rsrc == 0);
+	CBR = zext(Rsrc == 0);
+}
+
+:CMPEQ	Rsrc1, Rsrc2		is op1=0 & Rsrc1; op3=6 & Rsrc2 {
+	$(C) = (Rsrc1 == Rsrc2);
+	CBR = zext(Rsrc1 == Rsrc2);
+}
+
 :CMPI	Rsrc, "#"simm16			is op12=0x80; Rsrc & op3=4; simm16 {
 	#$(C_flag) = (Rsrc s< simm16);
 	$(C) = (Rsrc s< simm16);
