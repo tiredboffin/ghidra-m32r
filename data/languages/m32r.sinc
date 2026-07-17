@@ -16,6 +16,14 @@ define register offset=0x108 size=8 [ ACC1 ];
 define register offset=0x108 size=4 [ ACCLO1 ];
 define register offset=0x10C size=4 [ ACCHI1 ];
 define register offset=0x10A size=4 [ ACCMI1 ];
+define register offset=0x110 size=8 [ ACC2 ];
+define register offset=0x110 size=4 [ ACCLO2 ];
+define register offset=0x114 size=4 [ ACCHI2 ];
+define register offset=0x116 size=4 [ ACCMI2 ];
+define register offset=0x118 size=8 [ ACC3 ];
+define register offset=0x118 size=4 [ ACCLO3 ];
+define register offset=0x11C size=4 [ ACCHI3 ];
+define register offset=0x11A size=4 [ ACCMI3 ];
 
 
 @define C		"PSW[0,1]"		# migrate to this
@@ -416,6 +424,31 @@ REL24:		reloc				is	pcdisp24 [ reloc = (inst_start & 0xFFFFFFFC) + (pcdisp24 << 
   Rdest = ACCMI1;
 }
 
+:MVFACHI2 Rdest is op1=0x5 & Rdest; op34=0xf8 {
+  Rdest = ACCHI2;
+}
+
+:MVFACLO2 Rdest is op1=0x5 & Rdest; op34=0xf9 {
+  Rdest = ACCLO2;
+}
+
+:MVFACMI2 Rdest is op1=0x5 & Rdest; op34=0xfa {
+  Rdest = ACCMI2;
+}
+
+:MVFACHI3 Rdest is op1=0x5 & Rdest; op34=0xfc {
+  Rdest = ACCHI3;
+}
+
+:MVFACLO3 Rdest is op1=0x5 & Rdest; op34=0xfd {
+  Rdest = ACCLO3;
+}
+
+:MVFACMI3 Rdest is op1=0x5 & Rdest; op34=0xfe {
+  Rdest = ACCMI3;
+}
+
+
 #Test for decompiler
 :MVFC	Rdest",CBRd"				is op1=1 & Rdest; op34=0x91 {
 	#Rdest = zext($(C));
@@ -435,7 +468,7 @@ REL24:		reloc				is	pcdisp24 [ reloc = (inst_start & 0xFFFFFFFC) + (pcdisp24 << 
   ACCLO = Rsrc1;
 }
 
-:MVTACLO Rsrc1		 is op1=0x5 & Rsrc1; op34=0x72 {
+:MVTACMI Rsrc1		 is op1=0x5 & Rsrc1; op34=0x72 {
   ACCMI = Rsrc1;
 }
 
@@ -447,8 +480,32 @@ REL24:		reloc				is	pcdisp24 [ reloc = (inst_start & 0xFFFFFFFC) + (pcdisp24 << 
   ACCLO1 = Rsrc1;
 }
 
-:MVTACLO Rsrc1		 is op1=0x5 & Rsrc1; op34=0x76 {
+:MVTACMI1 Rsrc1		 is op1=0x5 & Rsrc1; op34=0x76 {
   ACCMI1 = Rsrc1;
+}
+
+:MVTACHI2 Rsrc1 is op1=0x5 & Rsrc1; op34=0x78 {
+  ACCHI2 = Rsrc1;
+}
+
+:MVTACLO2 Rsrc1 is op1=0x5 & Rsrc1; op34=0x79 {
+  ACCLO2 = Rsrc1;
+}
+
+:MVTACMI2 Rsrc1		 is op1=0x5 & Rsrc1; op34=0x7a {
+  ACCMI2 = Rsrc1;
+}
+
+:MVTACHI3 Rsrc1 is op1=0x5 & Rsrc1; op34=0x7c {
+  ACCHI3 = Rsrc1;
+}
+
+:MVTACLO3 Rsrc1 is op1=0x5 & Rsrc1; op34=0x7d {
+  ACCLO3 = Rsrc1;
+}
+
+:MVTACMI3 Rsrc1		 is op1=0x5 & Rsrc1; op34=0x7e {
+  ACCMI3 = Rsrc1;
 }
 
 :MVTC	Rsrc,CRdest				is op1=1 & CRdest; Rsrc {
