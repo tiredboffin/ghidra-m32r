@@ -348,7 +348,7 @@ REL24:		reloc				is	pcdisp24 [ reloc = (inst_start & 0xFFFFFFFC) + (pcdisp24 << 
 }
 
 :LDH	Rdest, "@("rel16, Rsrc")"	is op1=10 & Rdest; op3=10 & Rsrc; rel16 {
-	Rdest = sext(*:2 Rsrc + rel16);
+	Rdest = sext(*:2 (Rsrc + rel16));
 }
 
 :LDI	Rdest,"#"simm8			is op1=6 & Rdest; simm8 {
