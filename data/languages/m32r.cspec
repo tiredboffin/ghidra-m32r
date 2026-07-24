@@ -48,6 +48,11 @@
 	        </output>
 			<unaffected>
 				<register name="SP"/>
+			        <register name="R8"/>
+			        <register name="R9"/>
+			        <register name="R10"/>
+			        <register name="R11"/>
+			        <register name="R12"/>
 			</unaffected>
 	    </prototype>
 	</default_proto>
