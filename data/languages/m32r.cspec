@@ -37,6 +37,12 @@
 	        	<pentry minsize="1" maxsize="4" extension="inttype">
 	        		<register name="R3"/>
 	        	</pentry>
+			<pentry minsize="5" maxsize="8">
+				<addr space="join" piece1="R0" piece2="R1"/>
+			</pentry>
+			<pentry minsize="5" maxsize="8">
+				<addr space="join" piece1="R2" piece2="R3"/>
+			</pentry>
 			<pentry minsize="1" maxsize="40" extension="inttype" align="4">
 			          <addr space="stack" offset="0"/>
 			</pentry>
@@ -45,6 +51,9 @@
 	        	<pentry minsize="1" maxsize="4" extension="inttype">
 	        		<register name="R0"/>
 	        	</pentry>
+			<pentry minsize="5" maxsize="8">
+    				<addr space="join" piece1="R0" piece2="R1"/>
+			</pentry>
 	        </output>
 			<unaffected>
 				<register name="SP"/>
