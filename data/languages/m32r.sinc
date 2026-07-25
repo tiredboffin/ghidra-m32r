@@ -1,3 +1,4 @@
+@define FIX
 define alignment=1;
 
 define space mem type=ram_space size=4 default;
@@ -118,6 +119,7 @@ REL24:		reloc				is	pcdisp24 [ reloc = (inst_start & 0xFFFFFFFC) + (pcdisp24 << 
 	Rdest = Rsrc + simm16;
 }
 
+@ifndef FIX
 :ADDX	Rdest, Rsrc				is op1=0 & Rdest; op3=9 & Rsrc {
 	local tmp = Rdest + Rsrc;
 	#local tmp2 = tmp + zext($(C_flag));
@@ -127,6 +129,17 @@ REL24:		reloc				is	pcdisp24 [ reloc = (inst_start & 0xFFFFFFFC) + (pcdisp24 << 
 	CBR = zext(carry(Rdest, Rsrc) | carry(tmp, tmp2));
 	Rdest = Rdest + Rsrc + CBR;
 }
+@else
+:ADDX Rdest, Rsrc is op1=0 & Rdest; op3=9 & Rsrc {
+	local oldC = zext($(C));
+	local tmp = Rdest + Rsrc;
+	local result = tmp + oldC;
+	local newC = carry(Rdest, Rsrc) | carry(tmp, oldC);
+	Rdest = result;
+	$(C) = newC;
+	CBR = zext(newC);
+}
+@endif
 
 :AND	Rdest, Rsrc				is op1=0 & Rdest; op3=12 & Rsrc {
 	Rdest = Rdest & Rsrc;
@@ -624,6 +637,11 @@ REL24:		reloc				is	pcdisp24 [ reloc = (inst_start & 0xFFFFFFFC) + (pcdisp24 << 
 	*:1 Rsrc2 = Rsrc1:1; # & 0xFF;
 }
 
+:STB	Rsrc1,"@"Rsrc2"+"		is op1=2 & Rsrc1; Rsrc2 & op3=1 {
+	*:1 Rsrc2 = Rsrc1:1;
+	Rsrc2 = Rsrc2 + 1;
+}
+
 :STB	Rsrc1,"@("rel16,Rsrc2")"	is op1=10 & Rsrc1; op3=0 & Rsrc2; rel16 {
 	*:1 (Rsrc2 + rel16) = Rsrc1:1;
 }
@@ -652,6 +670,7 @@ REL24:		reloc				is	pcdisp24 [ reloc = (inst_start & 0xFFFFFFFC) + (pcdisp24 << 
 	Rdest = Rdest - Rsrc;
 }
 
+@ifndef FIX
 :SUBX	Rdest, Rsrc		is op1=0 & Rdest; op3=1 & Rsrc { #fix
 	# This is incorrect and needs to have C flag added for borrow
 	Rdest = Rdest - Rsrc;
@@ -659,6 +678,18 @@ REL24:		reloc				is	pcdisp24 [ reloc = (inst_start & 0xFFFFFFFC) + (pcdisp24 << 
 	$(C) = sborrow(Rdest, Rsrc);
 	CBR = zext(sborrow(Rdest, Rsrc));
 }
+
+@else
+#Test: SUBX(Rdest = 0,Rsrc  = 0,C = 1) should give (Rdest = 0xffffffff, C=1)
+:SUBX Rdest, Rsrc is op1=0 & Rdest; op3=1 & Rsrc {
+    local oldC = zext($(C));
+    local tmp = Rdest - Rsrc;
+    local newC = (Rdest < Rsrc) | (tmp < oldC);
+    Rdest = tmp - oldC;
+    $(C) = newC;
+    CBR = zext(newC);
+}
+@endif
 
 :TRAP	"#"op4					is op12=0x10; op3=15 & op4 {
 	BPC = inst_start + 4;
